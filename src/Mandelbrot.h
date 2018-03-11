@@ -13,7 +13,7 @@ std::vector<T> linspace(T minimum, T maximum, size_t N)
 
     auto val = minimum;
 
-    for(auto& it: xs){
+    for (auto &it: xs) {
         it = val;
         val += stride;
     }
@@ -33,17 +33,23 @@ inline int mandelbrot(std::complex<double> c, int iterations)
 }
 
 template<size_t width, size_t height>
-std::array<unsigned char, height * width> mandelbrot_set(double xmin, double xmax, double ymin, double ymax, int iterations)
+std::array<unsigned char, height * width>
+mandelbrot_set(double xmin, double xmax, double ymin, double ymax, int iterations)
 {
     auto horizontal_values = linspace(xmin, xmax, width);
     auto vertical_values = linspace(ymin, ymax, height);
     auto image = std::array<unsigned char, height * width>{};
 
-    for (int row = 0; row < vertical_values.size(); row++) {
-        for (int col = 0; col < horizontal_values.size(); col++) {
+    for (int row = 0; row < height; row++) {
+        for (int col = 0; col < width; col++) {
             std::complex<double> c = 1i * vertical_values[row] + horizontal_values[col];
             auto required_iterations = mandelbrot(c, iterations);
-            image[row * height + col] = required_iterations;
+            try {
+                image.at(row * width + col) = required_iterations;
+            } catch (std::out_of_range) {
+               volatile int a = 0;
+            }
+
         }
     }
     return image;
